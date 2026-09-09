@@ -1,0 +1,6 @@
+{
+  "name": "Haven Living Real Estate",
+  "description": "A luxury, fully responsive real estate website with dynamic search filters, interactive mortgage calculator, property details gallery, and tour scheduling built in vanilla HTML5, CSS3, and JavaScript.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

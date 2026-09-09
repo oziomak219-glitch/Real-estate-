@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haven Living Real Estate | Luxury Architectural Residences</title>
+  <meta name="description" content="Discover world-class luxury real estate, modern villas, penthouses, and coastal estates. Interactive property search, live mortgage calculator, and private tour scheduling.">
+  
+  <!-- Typography (Plus Jakarta Sans & Outfit) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       1. FIXED NAVIGATION BAR
+       ========================================================================= -->
+  <header class="navbar" id="mainNavbar">
+    <div class="container navbar-container">
+      <!-- Brand Logo -->
+      <a href="#home" class="brand-logo" id="brandLogo">
+        <div class="brand-icon">H</div>
+        <div class="brand-text">
+          <span class="brand-name">HAVEN</span>
+          <span class="brand-sub">Living Real Estate</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#home" class="nav-link active" id="navHome">Home</a></li>
+          <li><a href="#listings" class="nav-link" id="navListings">Listings</a></li>
+          <li><a href="#mortgage-calculator" class="nav-link" id="navCalculator">Calculator</a></li>
+          <li><a href="#about" class="nav-link" id="navAbout">About Us</a></li>
+          <li><a href="#contact" class="nav-link" id="navContact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="nav-actions">
+        <button class="saved-btn" id="savedPropertiesBtn" onclick="showSavedProperties()" title="View saved properties">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span>Saved</span>
+          <span class="saved-count" id="savedCountBadge">0</span>
+        </button>
+        <button class="btn btn-primary btn-sm" id="navScheduleTourBtn" onclick="openTourModal()">
+          Schedule Tour
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Navigation Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <a href="#home" class="mobile-nav-link">Home</a>
+    <a href="#listings" class="mobile-nav-link">Exclusive Listings</a>
+    <a href="#mortgage-calculator" class="mobile-nav-link">Mortgage Calculator</a>
+    <a href="#about" class="mobile-nav-link">About Haven</a>
+    <a href="#contact" class="mobile-nav-link">Contact & Inquiries</a>
+    <button class="btn btn-primary btn-block" onclick="openTourModal(); document.getElementById('mobileNavDrawer').classList.remove('open');">
+      Schedule Private Tour
+    </button>
+  </div>
+
+  <!-- =========================================================================
+       2. HERO SECTION & QUICK SEARCH BAR
+       ========================================================================= -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          <span>Premier Global Luxury Real Estate</span>
+        </div>
+        <h1 class="hero-title">
+          Discover Architectural <span class="hero-title-highlight">Sanctuary</span>
+        </h1>
+        <p class="hero-description">
+          Curated modern villas, panoramic penthouses, and private coastal estates across the world's most coveted destinations.
+        </p>
+
+        <!-- Quick Search Form -->
+        <div class="search-widget" id="searchWidget">
+          <form class="search-form" id="quickSearchForm">
+            <!-- Location Input -->
+            <div class="search-field">
+              <label for="searchLocation" class="search-label">Location</label>
+              <div class="search-input-wrap">
+                <span class="search-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="searchLocation" 
+                  class="search-input" 
+                  placeholder="City, neighborhood, or address" 
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <!-- Property Type Select -->
+            <div class="search-field">
+              <label for="searchType" class="search-label">Property Type</label>
+              <div class="search-input-wrap">
+                <span class="search-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </span>
+                <select id="searchType" class="search-select">
+                  <option value="all">All Types</option>
+                  <option value="Villa">Modern Villa</option>
+                  <option value="Penthouse">Sky Penthouse</option>
+                  <option value="Coastal">Coastal Estate</option>
+                  <option value="Loft">Historic Loft</option>
+                  <option value="Mountain">Mountain Chalet</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Price Range -->
+            <div class="search-field">
+              <label for="searchPrice" class="search-label">Max Price</label>
+              <div class="search-input-wrap">
+                <span class="search-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </span>
+                <select id="searchPrice" class="search-select">
+                  <option value="0">Any Price</option>
+                  <option value="5000000">Up to $5,000,000</option>
+                  <option value="8000000">Up to $8,000,000</option>
+                  <option value="12000000">Up to $12,000,000</option>
+                  <option value="15000000">Up to $15,000,000</option>
+                  <option value="20000000">Up to $20,000,000</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Bedrooms -->
+            <div class="search-field">
+              <label for="searchBeds" class="search-label">Bedrooms</label>
+              <div class="search-input-wrap">
+                <span class="search-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path>
+                  </svg>
+                </span>
+                <select id="searchBeds" class="search-select">
+                  <option value="0">Any Beds</option>
+                  <option value="3">3+ Bedrooms</option>
+                  <option value="4">4+ Bedrooms</option>
+                  <option value="5">5+ Bedrooms</option>
+                  <option value="6">6+ Bedrooms</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary search-btn" id="searchSubmitBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Search</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Trust Stats -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number">$3.8B+</div>
+            <div class="stat-label">Total Closed Volume</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">99.4%</div>
+            <div class="stat-label">Client Satisfaction</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">180+</div>
+            <div class="stat-label">Private Listings</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">14</div>
+            <div class="stat-label">Global Metros</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       3. INTERACTIVE PROPERTY LISTINGS SECTION
+       ========================================================================= -->
+  <section class="section" id="listings">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Curated Portfolio</span>
+        <h2 class="section-title">Exclusive Featured Residences</h2>
+        <p class="section-subtitle">
+          Explore architectural icons and private sanctuaries engineered for discerning owners seeking luxury and timeless design.
+        </p>
+      </div>
+
+      <!-- Filters & Sorting Controls -->
+      <div class="listings-filter-bar">
+        <div class="category-tabs" role="tablist">
+          <button class="tab-btn active" data-category="all" id="tabAll">All Residences</button>
+          <button class="tab-btn" data-category="featured" id="tabFeatured">Featured</button>
+          <button class="tab-btn" data-category="penthouse" id="tabPenthouse">Penthouses</button>
+          <button class="tab-btn" data-category="for-sale" id="tabForSale">Coastal & Lofts</button>
+          <button class="tab-btn" data-category="new-construction" id="tabNew">New Construction</button>
+        </div>
+
+        <div class="listings-meta">
+          <span class="results-count" id="resultsCount">Loading properties...</span>
+          <select id="sortSelect" class="sort-select" aria-label="Sort Properties">
+            <option value="featured">Sort by: Featured</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="sqft-desc">Living Area: Largest</option>
+            <option value="beds-desc">Bedrooms: Most</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Dynamic Property Grid (Populated by script.js) -->
+      <div class="property-grid" id="propertyGrid">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       4. INTERACTIVE MORTGAGE CALCULATOR SECTION
+       ========================================================================= -->
+  <section class="section section-dark" id="mortgage-calculator">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Financial Estimator</span>
+        <h2 class="section-title">Calculate Your Monthly Investment</h2>
+        <p class="section-subtitle">
+          Evaluate purchasing power and customize down payment, amortization terms, and interest rates in real-time.
+        </p>
+      </div>
+
+      <div class="calculator-card" id="mortgageCalcCard">
+        <!-- Left Side: Inputs -->
+        <div class="calc-inputs-side">
+          <div class="calc-form-grid">
+            <!-- Home Price -->
+            <div class="calc-form-group full-width">
+              <label for="calcHomePrice" class="calc-label">
+                <span>Home Purchase Price</span>
+              </label>
+              <div class="input-with-affix">
+                <span class="input-affix">$</span>
+                <input 
+                  type="number" 
+                  id="calcHomePrice" 
+                  class="calc-input" 
+                  value="12500000" 
+                  step="50000" 
+                  min="100000"
+                />
+              </div>
+            </div>
+
+            <!-- Down Payment -->
+            <div class="calc-form-group full-width">
+              <label for="calcDownPayment" class="calc-label">
+                <span>Down Payment</span>
+                <span class="calc-label-val" id="calcDownPercentVal">20%</span>
+              </label>
+              <div class="input-with-affix">
+                <span class="input-affix">$</span>
+                <input 
+                  type="number" 
+                  id="calcDownPayment" 
+                  class="calc-input" 
+                  value="2500000" 
+                  step="25000" 
+                  min="0"
+                />
+              </div>
+              <input 
+                type="range" 
+                id="calcDownPercentSlider" 
+                class="range-slider" 
+                min="5" 
+                max="80" 
+                value="20" 
+                aria-label="Down Payment Percentage Slider"
+              />
+            </div>
+
+            <!-- Interest Rate -->
+            <div class="calc-form-group">
+              <label for="calcInterestRate" class="calc-label">Interest Rate</label>
+              <div class="input-with-affix">
+                <input 
+                  type="number" 
+                  id="calcInterestRate" 
+                  class="calc-input" 
+                  value="6.25" 
+                  step="0.05" 
+                  min="1" 
+                  max="15"
+                />
+                <span class="input-affix">%</span>
+              </div>
+            </div>
+
+            <!-- Loan Term Selector -->
+            <div class="calc-form-group">
+              <label class="calc-label">Loan Term</label>
+              <div class="term-selector">
+                <button type="button" class="term-btn" data-years="15">15 Yrs</button>
+                <button type="button" class="term-btn" data-years="20">20 Yrs</button>
+                <button type="button" class="term-btn active" data-years="30">30 Yrs</button>
+              </div>
+            </div>
+
+            <!-- Property Tax & Insurance Toggle -->
+            <div class="calc-form-group full-width" style="margin-top: 0.5rem;">
+              <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.875rem; color: var(--text-muted);">
+                <input type="checkbox" id="calcIncludeTax" checked style="width: 18px; height: 18px; accent-color: var(--accent-color);">
+                <span>Include estimated Property Taxes (~1.1%), Hazard Insurance & HOA</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Live Calculation Display -->
+        <div class="calc-results-side">
+          <div class="calc-payment-display">
+            <div class="payment-label">Estimated Total Monthly Payment</div>
+            <div class="payment-amount" id="calcTotalPayment">$73,500</div>
+            <div class="payment-period">per month</div>
+          </div>
+
+          <!-- Visual Breakdown Proportional Bar -->
+          <div class="breakdown-bar-wrap">
+            <div class="breakdown-bar">
+              <div class="bar-segment bar-principal" id="barPrincipal" style="width: 78%;" title="Principal & Interest"></div>
+              <div class="bar-segment bar-taxes" id="barTaxes" style="width: 15%;" title="Property Taxes"></div>
+              <div class="bar-segment bar-insurance" id="barInsurance" style="width: 4%;" title="Home Insurance"></div>
+              <div class="bar-segment bar-hoa" id="barHOA" style="width: 3%;" title="HOA Dues"></div>
+            </div>
+          </div>
+
+          <!-- Breakdown Legend -->
+          <div class="breakdown-legend">
+            <div class="legend-item">
+              <div class="legend-header">
+                <span class="legend-dot" style="background-color: var(--accent-color);"></span>
+                <span>Principal & Interest</span>
+              </div>
+              <div class="legend-val" id="calcValPI">$61,568</div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-header">
+                <span class="legend-dot" style="background-color: #38bdf8;"></span>
+                <span>Property Taxes</span>
+              </div>
+              <div class="legend-val" id="calcValTax">$11,458</div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-header">
+                <span class="legend-dot" style="background-color: #a855f7;"></span>
+                <span>Home Insurance</span>
+              </div>
+              <div class="legend-val" id="calcValIns">$160</div>
+            </div>
+
+            <div class="legend-item">
+              <div class="legend-header">
+                <span class="legend-dot" style="background-color: #34d399;"></span>
+                <span>HOA Dues</span>
+              </div>
+              <div class="legend-val" id="calcValHOA">$250</div>
+            </div>
+          </div>
+
+          <div class="calc-action-box">
+            <p class="calc-action-text">Need bespoke private financing or jumbo mortgage structuring?</p>
+            <button class="btn btn-primary btn-sm btn-block" onclick="openTourModal('Mortgage Advisory')">
+              Connect With Private Wealth Advisor
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       5. ABOUT US & SERVICES SECTION
+       ========================================================================= -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">The Haven Difference</span>
+        <h2 class="section-title">White-Glove Real Estate Advisory</h2>
+        <p class="section-subtitle">
+          We represent high-net-worth individuals, family offices, and architectural enthusiasts seeking confidential acquisitions and world-class estates.
+        </p>
+      </div>
+
+      <!-- Services 4-Column Grid -->
+      <div class="services-grid">
+        <div class="service-card" id="serviceCard1">
+          <div class="service-icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 class="service-title">Off-Market Access</h3>
+          <p class="service-desc">
+            Gain confidential entry to premier trophy properties that never appear on public multiple listing services.
+          </p>
+        </div>
+
+        <div class="service-card" id="serviceCard2">
+          <div class="service-icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h3 class="service-title">Global Network</h3>
+          <p class="service-desc">
+            Direct syndication with luxury partner desks in London, Dubai, Geneva, Tokyo, New York, and Beverly Hills.
+          </p>
+        </div>
+
+        <div class="service-card" id="serviceCard3">
+          <div class="service-icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+              <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+            </svg>
+          </div>
+          <h3 class="service-title">Architectural Valuation</h3>
+          <p class="service-desc">
+            In-depth structural appraisal, land acquisition modeling, and historical provenance analysis for every asset.
+          </p>
+        </div>
+
+        <div class="service-card" id="serviceCard4">
+          <div class="service-icon-wrap">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3 class="service-title">Private Concierge</h3>
+          <p class="service-desc">
+            Dedicated handling of private aircraft charters, security teams, escrow structuring, and interior curation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       6. CLIENT TESTIMONIALS
+       ========================================================================= -->
+  <section class="section section-dark">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Testimonials</span>
+        <h2 class="section-title">Trusted By Visionary Leaders</h2>
+        <p class="section-subtitle">
+          Read what our buyers and collectors say about their acquisition journeys with Haven Living.
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "Haven Living executed our Bel Air acquisition with unmatched discretion. Their architectural insight and negotiation precision saved us weeks in due diligence."
+          </p>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Evelyn Thorne" class="author-img" />
+            <div>
+              <div class="author-name">Evelyn Thorne</div>
+              <div class="author-property">Purchased Bel Air Estate ($14.5M)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "Finding a duplex penthouse in Manhattan with 360-degree Central Park views seemed impossible until Alexander Vance tapped Haven's private off-market network."
+          </p>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Marcus Sterling" class="author-img" />
+            <div>
+              <div class="author-name">Marcus Sterling</div>
+              <div class="author-property">Purchased Park Ave Penthouse ($8.9M)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <p class="testimonial-quote">
+            "From yacht dockage requirements to hurricane-rated structural engineering review, Camilla Rodriguez handled our Palm Beach beachfront estate with white-glove mastery."
+          </p>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&q=80" alt="Sophia Al-Mansoor" class="author-img" />
+            <div>
+              <div class="author-name">Sophia Al-Mansoor</div>
+              <div class="author-property">Purchased Miami Beach Waterfront ($11.2M)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       7. CONTACT & INQUIRY SECTION
+       ========================================================================= -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="contact-wrapper">
+        <!-- Contact Information -->
+        <div class="contact-info-card">
+          <h2 class="contact-info-title">Initiate a Confidential Conversation</h2>
+          <p class="contact-info-subtitle">
+            Whether you are considering acquiring an architectural trophy, requesting private representation, or scheduling a confidential showing, our senior directors are at your service.
+          </p>
+
+          <div class="contact-details-list">
+            <div class="contact-detail-item">
+              <div class="detail-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+              </div>
+              <div>
+                <div class="detail-label">Direct Concierge</div>
+                <div class="detail-value">+1 (800) 555-HAVEN / (310) 555-0100</div>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="detail-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <div>
+                <div class="detail-label">Private Inquiries</div>
+                <div class="detail-value">advisory@havenliving.com</div>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="detail-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div>
+                <div class="detail-label">Headquarters</div>
+                <div class="detail-value">9500 Wilshire Blvd, Beverly Hills, CA 90212</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1.5rem;">
+            <span style="font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-color);">Global Presence</span>
+            <div style="font-size: 0.9375rem; color: rgba(255,255,255,0.8); margin-top: 0.5rem;">
+              New York • Los Angeles • Miami • London • Dubai • Geneva
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form with Validation -->
+        <div class="contact-form-card">
+          <h3 class="form-title">Send An Inquiry</h3>
+          <p class="form-subtitle">Fill in the details below and an estate director will respond within 2 business hours.</p>
+
+          <form id="contactForm" novalidate>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="contactName" class="form-label">Full Name *</label>
+                <input 
+                  type="text" 
+                  id="contactName" 
+                  class="form-control" 
+                  placeholder="e.g. Eleanor Vance" 
+                  required
+                />
+                <span class="form-error-msg">Please provide your full name.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="contactEmail" class="form-label">Email Address *</label>
+                <input 
+                  type="email" 
+                  id="contactEmail" 
+                  class="form-control" 
+                  placeholder="name@domain.com" 
+                  required
+                />
+                <span class="form-error-msg">Please enter a valid email address.</span>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="contactPhone" class="form-label">Phone Number *</label>
+                <input 
+                  type="tel" 
+                  id="contactPhone" 
+                  class="form-control" 
+                  placeholder="(555) 000-0000" 
+                  required
+                />
+                <span class="form-error-msg">Please enter a valid phone number.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="contactTimeframe" class="form-label">Acquisition Timeframe</label>
+                <select id="contactTimeframe" class="form-control">
+                  <option value="immediate">Immediate (30-60 Days)</option>
+                  <option value="3-6months">3 to 6 Months</option>
+                  <option value="exploratory">Exploratory / Portfolio Review</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage" class="form-label">Your Message or Property of Interest *</label>
+              <textarea 
+                id="contactMessage" 
+                class="form-control" 
+                placeholder="Share your requirements, desired neighborhoods, or questions regarding a specific property listing..." 
+                required
+              ></textarea>
+              <span class="form-error-msg">Please include a message for our advisory team.</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="contactSubmitBtn">
+              Submit Private Inquiry
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       8. MODALS (PROPERTY DETAILS & TOUR SCHEDULER)
+       ========================================================================= -->
+  <!-- Property Details Modal -->
+  <div class="modal-overlay" id="propertyModal" role="dialog" aria-modal="true" aria-labelledby="modalPropTitle">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="closeModal('propertyModal')" aria-label="Close Details Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div id="propertyModalContent">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule Tour Modal -->
+  <div class="modal-overlay" id="tourModal" role="dialog" aria-modal="true" aria-labelledby="tourModalTitle">
+    <div class="modal-dialog" style="max-width: 600px;">
+      <button class="modal-close-btn" onclick="closeModal('tourModal')" aria-label="Close Tour Modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal-body">
+        <span class="card-type-tag">VIP Private Access</span>
+        <h2 class="modal-prop-title" id="tourModalTitle" style="font-size: 1.6rem; margin-bottom: 0.5rem;">
+          Schedule a Private Tour
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.9375rem; margin-bottom: 1.5rem;">
+          Select your preferred date and property for an in-person walkthrough or live 3D video walkthrough.
+        </p>
+
+        <form id="scheduleTourForm" novalidate>
+          <div class="form-group">
+            <label for="tourPropertySelect" class="form-label">Select Residence</label>
+            <select id="tourPropertySelect" class="form-control">
+              <!-- Populated by script.js -->
+            </select>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="tourDate" class="form-label">Preferred Date *</label>
+              <input type="date" id="tourDate" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+              <label for="tourTime" class="form-label">Preferred Time *</label>
+              <select id="tourTime" class="form-control" required>
+                <option value="10:00 AM">10:00 AM - Morning Light</option>
+                <option value="01:30 PM">01:30 PM - Afternoon</option>
+                <option value="05:30 PM">05:30 PM - Golden Hour Sunset</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="tourName" class="form-label">Your Name *</label>
+              <input type="text" id="tourName" class="form-control" placeholder="Full Name" required />
+            </div>
+
+            <div class="form-group">
+              <label for="tourPhone" class="form-label">Phone Number *</label>
+              <input type="tel" id="tourPhone" class="form-control" placeholder="(555) 000-0000" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="tourEmail" class="form-label">Email Address *</label>
+            <input type="email" id="tourEmail" class="form-control" placeholder="name@domain.com" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+            Confirm Tour Reservation
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- =========================================================================
+       9. FOOTER
+       ========================================================================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a href="#home" class="brand-logo">
+            <div class="brand-icon">H</div>
+            <div class="brand-text">
+              <span class="brand-name">HAVEN</span>
+              <span class="brand-sub">Living Real Estate</span>
+            </div>
+          </a>
+          <p class="footer-brand-desc">
+            Haven Living is the premier luxury residential brokerage dedicated to architecturally significant homes, private islands, and luxury developments worldwide.
+          </p>
+          <div class="footer-socials">
+            <a href="#contact" class="social-link" title="Instagram" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+            <a href="#contact" class="social-link" title="LinkedIn" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+            </a>
+            <a href="#contact" class="social-link" title="YouTube" aria-label="YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home" class="footer-link">Home</a></li>
+            <li><a href="#listings" class="footer-link">Featured Properties</a></li>
+            <li><a href="#mortgage-calculator" class="footer-link">Mortgage Calculator</a></li>
+            <li><a href="#about" class="footer-link">Why Haven</a></li>
+            <li><a href="#contact" class="footer-link">Private Showing</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Global Desks</h4>
+          <ul class="footer-links">
+            <li><a href="#contact" class="footer-link">Beverly Hills & Bel Air</a></li>
+            <li><a href="#contact" class="footer-link">Manhattan & Tribeca</a></li>
+            <li><a href="#contact" class="footer-link">Miami Beach & Palm Beach</a></li>
+            <li><a href="#contact" class="footer-link">Aspen & Vail</a></li>
+            <li><a href="#contact" class="footer-link">London & Dubai</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Private Acquisitions</h4>
+          <p style="font-size: 0.875rem; line-height: 1.6; margin-bottom: 1rem; color: rgba(255,255,255,0.65);">
+            Subscribe to our confidential weekly architectural dossier of off-market residences.
+          </p>
+          <form class="newsletter-form" id="newsletterForm">
+            <input 
+              type="email" 
+              id="newsletterEmail" 
+              class="newsletter-input" 
+              placeholder="Enter your email address" 
+              required
+            />
+            <button type="submit" class="btn btn-primary btn-sm">
+              Subscribe Dossier
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Haven Living Real Estate Inc. All rights reserved. Equal Housing Opportunity.</div>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="#home" style="color: rgba(255,255,255,0.5);">Privacy Policy</a>
+          <a href="#home" style="color: rgba(255,255,255,0.5);">Terms of Service</a>
+          <a href="#home" style="color: rgba(255,255,255,0.5);">Fair Housing Act</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla JavaScript -->
+  <script src="./script.js"></script>
+</body>
+</html>
