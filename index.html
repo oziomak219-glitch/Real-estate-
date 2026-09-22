@@ -13,6 +13,36 @@
   
   <!-- Stylesheet -->
   <link rel="stylesheet" href="./styles.css">
+
+  <!-- Immediate resilient fallback for mobile navigation -->
+  <script>
+    function toggleMobileMenu(e) {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+      }
+      var drawer = document.getElementById('mobileNavDrawer');
+      var toggle = document.getElementById('mobileMenuToggle');
+      if (drawer) {
+        var isOpen = drawer.classList.toggle('open');
+        if (toggle) {
+          toggle.classList.toggle('active', isOpen);
+          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      }
+    }
+    function closeMobileMenu() {
+      var drawer = document.getElementById('mobileNavDrawer');
+      var toggle = document.getElementById('mobileMenuToggle');
+      if (drawer) drawer.classList.remove('open');
+      if (toggle) {
+        toggle.classList.remove('active');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+      document.body.style.overflow = '';
+    }
+  </script>
 </head>
 <body>
 
@@ -56,11 +86,21 @@
       </div>
 
       <!-- Mobile Hamburger Toggle -->
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Navigation Menu">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button 
+        class="mobile-menu-toggle" 
+        id="mobileMenuToggle" 
+        aria-label="Toggle Navigation Menu" 
+        aria-expanded="false" 
+        onclick="toggleMobileMenu(event)"
+      >
+        <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none; pointer-events: none;">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
     </div>
@@ -68,12 +108,12 @@
 
   <!-- Mobile Drawer Menu -->
   <div class="mobile-nav-drawer" id="mobileNavDrawer">
-    <a href="#home" class="mobile-nav-link">Home</a>
-    <a href="#listings" class="mobile-nav-link">Exclusive Listings</a>
-    <a href="#mortgage-calculator" class="mobile-nav-link">Mortgage Calculator</a>
-    <a href="#about" class="mobile-nav-link">About Haven</a>
-    <a href="#contact" class="mobile-nav-link">Contact & Inquiries</a>
-    <button class="btn btn-primary btn-block" onclick="openTourModal(); document.getElementById('mobileNavDrawer').classList.remove('open');">
+    <a href="#home" class="mobile-nav-link" onclick="closeMobileMenu()">Home</a>
+    <a href="#listings" class="mobile-nav-link" onclick="closeMobileMenu()">Exclusive Listings</a>
+    <a href="#mortgage-calculator" class="mobile-nav-link" onclick="closeMobileMenu()">Mortgage Calculator</a>
+    <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About Haven</a>
+    <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact & Inquiries</a>
+    <button class="btn btn-primary btn-block" onclick="closeMobileMenu(); openTourModal();">
       Schedule Private Tour
     </button>
   </div>
@@ -866,6 +906,6 @@
   </footer>
 
   <!-- Vanilla JavaScript -->
-  <script src="./script.js"></script>
+  <script type="module" src="./script.js"></script>
 </body>
 </html>

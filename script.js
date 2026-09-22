@@ -1002,6 +1002,36 @@ function setupMortgageCalculatorEvents() {
 // ==========================================================================
 // 11. NAVBAR, SCROLL & MOBILE MENU HANDLERS
 // ==========================================================================
+function toggleMobileMenu(e) {
+  if (e) {
+    if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    if (typeof e.preventDefault === 'function') e.preventDefault();
+  }
+  const drawer = document.getElementById('mobileNavDrawer');
+  const toggle = document.getElementById('mobileMenuToggle');
+  if (drawer) {
+    const isOpen = drawer.classList.toggle('open');
+    if (toggle) {
+      toggle.classList.toggle('active', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+}
+
+function closeMobileMenu() {
+  const drawer = document.getElementById('mobileNavDrawer');
+  const toggle = document.getElementById('mobileMenuToggle');
+  if (drawer) {
+    drawer.classList.remove('open');
+  }
+  if (toggle) {
+    toggle.classList.remove('active');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+  document.body.style.overflow = '';
+}
+
 function setupNavigation() {
   const navbar = document.getElementById('mainNavbar');
   const mobileToggle = document.getElementById('mobileMenuToggle');
@@ -1016,24 +1046,35 @@ function setupNavigation() {
     }
   });
 
-  // Mobile menu toggle
-  if (mobileToggle && mobileDrawer) {
-    mobileToggle.addEventListener('click', () => {
-      mobileDrawer.classList.toggle('open');
-    });
-
-    document.querySelectorAll('.mobile-nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileDrawer.classList.remove('open');
-      });
-    });
+  // Mobile menu toggle button listener
+  if (mobileToggle) {
+    mobileToggle.removeEventListener('click', toggleMobileMenu);
+    mobileToggle.addEventListener('click', toggleMobileMenu);
   }
+
+  // Close mobile drawer when clicking any link
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.removeEventListener('click', closeMobileMenu);
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Close mobile drawer when clicking outside
+  document.addEventListener('click', (e) => {
+    const drawer = document.getElementById('mobileNavDrawer');
+    const toggle = document.getElementById('mobileMenuToggle');
+    if (drawer && drawer.classList.contains('open')) {
+      if (!drawer.contains(e.target) && !toggle.contains(e.target)) {
+        closeMobileMenu();
+      }
+    }
+  });
 
   // Close modals with Escape key & backdrop clicks
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeModal('propertyModal');
       closeModal('tourModal');
+      closeMobileMenu();
     }
   });
 
@@ -1047,13 +1088,42 @@ function setupNavigation() {
 }
 
 // ==========================================================================
-// 12. INITIALIZATION ON DOM READY
+// 12. EXPORT FUNCTIONS TO GLOBAL WINDOW
+// (Ensures inline HTML onclick attributes work seamlessly in ES module builds on Vercel)
 // ==========================================================================
-document.addEventListener('DOMContentLoaded', () => {
+if (typeof window !== 'undefined') {
+  window.toggleMobileMenu = toggleMobileMenu;
+  window.closeMobileMenu = closeMobileMenu;
+  window.openPropertyModal = openPropertyModal;
+  window.closeModal = closeModal;
+  window.openTourModal = openTourModal;
+  window.openTourModalForProperty = openTourModalForProperty;
+  window.inquireAboutProperty = inquireAboutProperty;
+  window.prefillMortgage = prefillMortgage;
+  window.calculateMortgage = calculateMortgage;
+  window.showSavedProperties = showSavedProperties;
+  window.toggleFavorite = toggleFavorite;
+  window.updateSavedBadge = updateSavedBadge;
+  window.resetAllFilters = resetAllFilters;
+  window.renderPropertyListings = renderPropertyListings;
+  window.showToast = showToast;
+}
+
+// ==========================================================================
+// 13. INITIALIZATION ON DOM READY
+// ==========================================================================
+function initApp() {
   renderPropertyListings();
   setupFiltersAndSearch();
   setupMortgageCalculatorEvents();
   calculateMortgage();
   setupForms();
   setupNavigation();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  // If DOM is already interactive or complete (e.g. deferred module on production CDN / Vercel)
+  initApp();
+}
