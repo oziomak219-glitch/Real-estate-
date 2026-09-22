@@ -473,6 +473,10 @@ function updateSavedBadge() {
   if (badge) {
     badge.textContent = State.savedIds.length;
   }
+  const mobileBadge = document.getElementById('mobileSavedCountBadge');
+  if (mobileBadge) {
+    mobileBadge.textContent = State.savedIds.length;
+  }
 }
 
 function showSavedProperties() {
@@ -1002,74 +1006,89 @@ function setupMortgageCalculatorEvents() {
 // ==========================================================================
 // 11. NAVBAR, SCROLL & MOBILE MENU HANDLERS
 // ==========================================================================
-function toggleMobileMenu(e) {
-  if (e) {
-    if (typeof e.stopPropagation === 'function') e.stopPropagation();
-    if (typeof e.preventDefault === 'function') e.preventDefault();
-  }
+let lastToggleTime = 0;
+
+function openMobileMenu() {
   const drawer = document.getElementById('mobileNavDrawer');
   const toggle = document.getElementById('mobileMenuToggle');
-  if (drawer) {
-    const isOpen = drawer.classList.toggle('open');
-    if (toggle) {
-      toggle.classList.toggle('active', isOpen);
-      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  if (drawer) drawer.classList.add('open');
+  if (toggle) {
+    toggle.classList.add('active');
+    toggle.setAttribute('aria-expanded', 'true');
   }
+  if (backdrop) backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeMobileMenu() {
   const drawer = document.getElementById('mobileNavDrawer');
   const toggle = document.getElementById('mobileMenuToggle');
-  if (drawer) {
-    drawer.classList.remove('open');
-  }
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  if (drawer) drawer.classList.remove('open');
   if (toggle) {
     toggle.classList.remove('active');
     toggle.setAttribute('aria-expanded', 'false');
   }
+  if (backdrop) backdrop.classList.remove('open');
   document.body.style.overflow = '';
+}
+
+function toggleMobileMenu(e) {
+  if (e) {
+    if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    if (typeof e.preventDefault === 'function') e.preventDefault();
+  }
+  const now = Date.now();
+  if (now - lastToggleTime < 250) {
+    return;
+  }
+  lastToggleTime = now;
+
+  const drawer = document.getElementById('mobileNavDrawer');
+  if (drawer && drawer.classList.contains('open')) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
 }
 
 function setupNavigation() {
   const navbar = document.getElementById('mainNavbar');
   const mobileToggle = document.getElementById('mobileMenuToggle');
-  const mobileDrawer = document.getElementById('mobileNavDrawer');
+  const backdrop = document.getElementById('mobileNavBackdrop');
+  const closeBtn = document.getElementById('mobileDrawerClose');
 
   // Sticky navbar shadow on scroll
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
-
-  // Mobile menu toggle button listener
-  if (mobileToggle) {
-    mobileToggle.removeEventListener('click', toggleMobileMenu);
-    mobileToggle.addEventListener('click', toggleMobileMenu);
-  }
-
-  // Close mobile drawer when clicking any link
-  document.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.removeEventListener('click', closeMobileMenu);
-    link.addEventListener('click', closeMobileMenu);
-  });
-
-  // Close mobile drawer when clicking outside
-  document.addEventListener('click', (e) => {
-    const drawer = document.getElementById('mobileNavDrawer');
-    const toggle = document.getElementById('mobileMenuToggle');
-    if (drawer && drawer.classList.contains('open')) {
-      if (!drawer.contains(e.target) && !toggle.contains(e.target)) {
-        closeMobileMenu();
+    if (navbar) {
+      if (window.scrollY > 40) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
       }
     }
   });
 
-  // Close modals with Escape key & backdrop clicks
+  // Assign directly to onclick to guarantee NO double firing or listener accumulation
+  if (mobileToggle) {
+    mobileToggle.onclick = toggleMobileMenu;
+  }
+
+  if (backdrop) {
+    backdrop.onclick = closeMobileMenu;
+  }
+
+  if (closeBtn) {
+    closeBtn.onclick = closeMobileMenu;
+  }
+
+  // Close mobile drawer when clicking any link
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.onclick = closeMobileMenu;
+  });
+
+  // Close modals & mobile menu with Escape key
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeModal('propertyModal');
@@ -1078,6 +1097,7 @@ function setupNavigation() {
     }
   });
 
+  // Modal overlay backdrop clicks
   document.querySelectorAll('.modal-overlay').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
@@ -1092,8 +1112,9 @@ function setupNavigation() {
 // (Ensures inline HTML onclick attributes work seamlessly in ES module builds on Vercel)
 // ==========================================================================
 if (typeof window !== 'undefined') {
-  window.toggleMobileMenu = toggleMobileMenu;
+  window.openMobileMenu = openMobileMenu;
   window.closeMobileMenu = closeMobileMenu;
+  window.toggleMobileMenu = toggleMobileMenu;
   window.openPropertyModal = openPropertyModal;
   window.closeModal = closeModal;
   window.openTourModal = openTourModal;

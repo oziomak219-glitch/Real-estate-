@@ -16,32 +16,51 @@
 
   <!-- Immediate resilient fallback for mobile navigation -->
   <script>
-    function toggleMobileMenu(e) {
-      if (e) {
-        if (typeof e.stopPropagation === 'function') e.stopPropagation();
-        if (typeof e.preventDefault === 'function') e.preventDefault();
-      }
-      var drawer = document.getElementById('mobileNavDrawer');
-      var toggle = document.getElementById('mobileMenuToggle');
-      if (drawer) {
-        var isOpen = drawer.classList.toggle('open');
-        if (toggle) {
-          toggle.classList.toggle('active', isOpen);
-          toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    (function() {
+      var lastToggle = 0;
+      window.openMobileMenu = function() {
+        var d = document.getElementById('mobileNavDrawer');
+        var t = document.getElementById('mobileMenuToggle');
+        var b = document.getElementById('mobileNavBackdrop');
+        if (d) d.classList.add('open');
+        if (t) {
+          t.classList.add('active');
+          t.setAttribute('aria-expanded', 'true');
         }
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-      }
-    }
-    function closeMobileMenu() {
-      var drawer = document.getElementById('mobileNavDrawer');
-      var toggle = document.getElementById('mobileMenuToggle');
-      if (drawer) drawer.classList.remove('open');
-      if (toggle) {
-        toggle.classList.remove('active');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-      document.body.style.overflow = '';
-    }
+        if (b) b.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeMobileMenu = function() {
+        var d = document.getElementById('mobileNavDrawer');
+        var t = document.getElementById('mobileMenuToggle');
+        var b = document.getElementById('mobileNavBackdrop');
+        if (d) d.classList.remove('open');
+        if (t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-expanded', 'false');
+        }
+        if (b) b.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+
+      window.toggleMobileMenu = function(e) {
+        if (e) {
+          if (typeof e.stopPropagation === 'function') e.stopPropagation();
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+        }
+        var now = Date.now();
+        if (now - lastToggle < 250) return;
+        lastToggle = now;
+
+        var d = document.getElementById('mobileNavDrawer');
+        if (d && d.classList.contains('open')) {
+          window.closeMobileMenu();
+        } else {
+          window.openMobileMenu();
+        }
+      };
+    })();
   </script>
 </head>
 <body>
@@ -89,16 +108,18 @@
       <button 
         class="mobile-menu-toggle" 
         id="mobileMenuToggle" 
+        type="button"
         aria-label="Toggle Navigation Menu" 
         aria-expanded="false" 
+        aria-controls="mobileNavDrawer"
         onclick="toggleMobileMenu(event)"
       >
-        <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="pointer-events: none;">
+        <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
-        <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none; pointer-events: none;">
+        <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none; pointer-events: none;">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -106,16 +127,39 @@
     </div>
   </header>
 
+  <!-- Mobile Nav Backdrop -->
+  <div class="mobile-nav-backdrop" id="mobileNavBackdrop" onclick="closeMobileMenu()"></div>
+
   <!-- Mobile Drawer Menu -->
-  <div class="mobile-nav-drawer" id="mobileNavDrawer">
-    <a href="#home" class="mobile-nav-link" onclick="closeMobileMenu()">Home</a>
-    <a href="#listings" class="mobile-nav-link" onclick="closeMobileMenu()">Exclusive Listings</a>
-    <a href="#mortgage-calculator" class="mobile-nav-link" onclick="closeMobileMenu()">Mortgage Calculator</a>
-    <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About Haven</a>
-    <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact & Inquiries</a>
-    <button class="btn btn-primary btn-block" onclick="closeMobileMenu(); openTourModal();">
-      Schedule Private Tour
-    </button>
+  <div class="mobile-nav-drawer" id="mobileNavDrawer" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">Menu</span>
+      <button class="mobile-drawer-close" id="mobileDrawerClose" type="button" aria-label="Close navigation" onclick="closeMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <nav class="mobile-nav-links" aria-label="Mobile Navigation Links">
+      <a href="#home" class="mobile-nav-link" onclick="closeMobileMenu()">Home</a>
+      <a href="#listings" class="mobile-nav-link" onclick="closeMobileMenu()">Exclusive Listings</a>
+      <a href="#mortgage-calculator" class="mobile-nav-link" onclick="closeMobileMenu()">Mortgage Calculator</a>
+      <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About Haven</a>
+      <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact & Inquiries</a>
+    </nav>
+    <div class="mobile-nav-actions">
+      <button class="saved-btn mobile-saved-btn" id="mobileSavedPropertiesBtn" type="button" onclick="closeMobileMenu(); showSavedProperties();">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span>Saved Properties</span>
+        <span class="saved-count" id="mobileSavedCountBadge">0</span>
+      </button>
+      <button class="btn btn-primary btn-block" type="button" onclick="closeMobileMenu(); openTourModal();">
+        Schedule Private Tour
+      </button>
+    </div>
   </div>
 
   <!-- =========================================================================
